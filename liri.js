@@ -6,10 +6,11 @@ var request = require('request');
 var twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 
+//assumoing that when you type in 0 node 1 liri 2 command 3 param for command
 var liriCommand = process.argv[2];
 var input = process.argv[3];
 
-//liri commands
+//liri commands (function that controlls the other functions)
 
 function commands(liriCommand, input) {
     switch(liriCommand) {
@@ -17,7 +18,7 @@ function commands(liriCommand, input) {
             getTweets(input);
             break;
         case "spotify-this-song":
-            getSpotify(input);
+            getSong(input);
             break;
         case "movie-this":
             getMovie(input);
@@ -29,10 +30,17 @@ function commands(liriCommand, input) {
         console.log("Please enter one of the following commands: 'my-tweets', 'spotify-this-song', 'movie-this', 'do-what-it-says' followed by parameter.");
     }
 }
+
+//Twitter "get twets"
 function getTweets(input) {
+    //allows functionality of keys
     var client = new twitter(keys.twitter);
+    // input would be the final param of the CLI (node liri get-tweets param)
     var twitterUserName = input;
 
+    // this simplifies the api call process taking the necessary params in the form of a single 
+    // varable that can be passed into a single client API .get call
+    // result 'statuses/user_timeline
     var params = { screen_name: twitterUserName, count: 20 };
     client.get('statuses/user_timeline', params, function (error, tweets, response) {
         if (error) {
@@ -80,6 +88,8 @@ function getSong(songName) {
     });
 };
 
+// get movie function
+
 function getMovie(movieName) {
     if (!movieName) {
         movieName = "mr nobody";
@@ -105,6 +115,8 @@ function getMovie(movieName) {
                 "Actors: " + movieObject.Actors + "\r\n";
 
             console.log(movieResults);
+
+            //makes it possible to log the user input into the 'log.text' file
 
             fs.appendFile('log.txt', movieResults, function (err) {
                 if (err) throw err;
